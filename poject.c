@@ -1,4 +1,3 @@
-
 #pragma config(Sensor, S1,     TouchSensor,    sensorTouch)
 #pragma config(Sensor, S2,     SonarSensorRight, sensorSONAR)
 #pragma config(Sensor, S3,     SonarSensorLeft, sensorSONAR)
@@ -23,9 +22,23 @@ task main()
 		while( countValue < 2)//forward
 		{
 
-			
+			motor[motorA] = 30;
+			motor[motorC] = 30;
 
-			nxtDisplayBigStringAt(0, 31, "%d" ,SensorValue(SonarSensorLeft));
+        //when surface is black count goes up
+			if( SensorValue(LightSensor) < 50)
+			{
+					countValue++;
+					wait1Msec(100);
+					
+					//Waiting to exit black
+			}//end if
+			if (SensorValue(LightSensor) > 50)
+			{
+				countValue=0;
+			}
+
+			nxtDisplayBigStringAt(0, 31, "%d" ,countValue);
 
 		}//end while
 
