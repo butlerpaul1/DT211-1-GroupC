@@ -30,10 +30,11 @@ int direction = 1;
 int forwardCounter = 0;
 int tempforcounter = 0;
 
-int tepmleft;
+int templeft;
 int minleft;
 int tempright;
-int minrght;
+int minright;
+int thresholdValue = 0;
 
 task main()
 {
@@ -43,8 +44,8 @@ task main()
 		int lineCounter = 0;											//counts lines
 		int lightValue = 0;												//light value
 		int darkValue = 0;												//dark value
-		int thresholdValue = 0;
-		int finish = 0;														//when 5 prgram stops
+
+		int finish = 0;														//when 2 prgram stops
 		int turns = 0;
 
 	/**************************************************************************************/
@@ -65,11 +66,24 @@ task main()
 		while(SensorValue(TouchSensor) == 0)
 		{
 		}
+
+		wait1Msec(100);
+		tempright = minright = SensorValue(SonarSensorRight);
+		templeft = minleft = SensorValue(SonarSensorLeft);
+
+		while(SensorValue(TouchSensor) == 0)
+		{
+		}
 	/********************************************************************************************/
 
 		while(finish !=2)
 		{
-			if(forwardCounter == 8)
+			if(forwardCounter == 8 && tempforcounter == 1)
+			{
+				turnaround();
+			}
+
+		if(forwardCounter == 8)
 			{
 				turnaround();
 				tempforcounter = 1;
@@ -80,12 +94,13 @@ task main()
 				turnaround();
 			}
 
-			if(forwardCounter == 8 && tempforcounter == 1)
-			{
-				turnaround();
-			}
+			eraseDisplay();
+			nxtDisplayBigStringAt(0, 31, "%d,%d,%d,%d" ,y,x,direction,forwardCounter);
 
-			//scan ();
+
+
+
+			scan();
 
 			if (find == 2)
 			{
@@ -129,6 +144,9 @@ task main()
                 {
                     find++;
                 }
+
+                eraseDisplay();
+				nxtDisplayBigStringAt(0, 31, "%d,%d,%d,%d" ,y,x,direction,forwardCounter);
 			}
 
 
@@ -143,23 +161,17 @@ void orientation (void)
 	{
 		y++;
 	}
-	else
+	if(direction == 2)
 	{
-		if(direction == 2)
-		{
-			x++;
-		}
-		else
-		{
-			if(direction == 3)
-			{
-				y--;
-			}
-			else
-			{
-				x--;
-			}
-		}
+		x++;
+	}
+	if(direction == 3)
+	{
+		y--;
+	}
+	if(direction == 4)
+	{
+		x--;
 	}
 }
 
@@ -169,8 +181,8 @@ void left (void)
 	motor[motorC] = 0;
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = 185;
-	nMotorEncoderTarget[motorC] = -185;
+	nMotorEncoderTarget[motorA] = 187;
+	nMotorEncoderTarget[motorC] = -187;
 	motor[motorA] = 20;
 	motor[motorC] = -20;
 
@@ -200,8 +212,8 @@ void right (void)
 	motor[motorC] = 0;
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = 185;
-	nMotorEncoderTarget[motorC] = -185;
+	nMotorEncoderTarget[motorA] = 187;
+	nMotorEncoderTarget[motorC] = -187;
 	motor[motorA] = -20;
 	motor[motorC] = 20;
 
@@ -242,11 +254,11 @@ void forwardfull (void)
 
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = 280;
-	nMotorEncoderTarget[motorC] = 280;
+	nMotorEncoderTarget[motorA] = 295;
+	nMotorEncoderTarget[motorC] = 295;
 
-	motor[motorA] = 40;
-	motor[motorC] = 40;
+	motor[motorA] = 20;
+	motor[motorC] = 20;
 
 	while (nMotorRunState[motorA] != runStateIdle)
 	{
@@ -276,8 +288,8 @@ void forwardsmall (void)
 	motor[motorC] = 0;
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = 80;
-	nMotorEncoderTarget[motorC] = 80;
+	nMotorEncoderTarget[motorA] = 70;
+	nMotorEncoderTarget[motorC] = 70;
 	motor[motorA] = 20;
 	motor[motorC] = 20;
 
@@ -298,8 +310,8 @@ void backwardsmall (void)
 	motor[motorC] = 0;
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = -80;
-	nMotorEncoderTarget[motorC] = -80;
+	nMotorEncoderTarget[motorA] = -70;
+	nMotorEncoderTarget[motorC] = -70;
 	motor[motorA] = -20;
 	motor[motorC] = -20;
 
@@ -314,11 +326,54 @@ void backwardsmall (void)
 //remember to count x and y
 void findingleft (void)
 {
-	left ();
+	int counter = 0;
+	int touch = 0;
+
+	if (y == 1|| y == 2 || y == 5 || y == 8)
+	{
+		left();
+		forwardsmall();
+		touch = SensorValue(TouchSensor);
+		while(touch == 0)
+		{
+			forwardfull();
+			counter++;
+			touch = SensorValue(TouchSensor);
+			if(touch != 0)
+			{
+				find++;
+			}
+			if(SensorValue(LightSensor) < thresholdValue)
+			{
+				touch = 1;
+			}
+
+			if(counter == 3)
+			{
+				touch = 1;
+			}
+
+			if(touch != 0)
+			{
+				backwardsmall();
+				turnaround();
+				while(counter != 0)
+				{
+					counter--;
+					forwardfull();
+				}
+				left();
+			}
+
+		 }
+	}
+
+
 	if (x == 0 && y == 0)
 	{
+		left();
 		forwardfull ();
-		if (SensorValue(touchSensor) != 0)
+		if (SensorValue(TouchSensor) != 0)
 		{
 			find++;
 			turnaround ();
@@ -334,7 +389,7 @@ void findingleft (void)
 		forwardfull ();
 		left ();
 		forwardfull ();
-		if(sensorValue(touchSensor) != 0)
+		if(SensorValue(TouchSensor) != 0)
 		{
 			find++;
 		}
@@ -360,7 +415,7 @@ void findingleft (void)
 		forwardfull ();
 		right();
 		forwardfull ();
-		if(sensorValue(touchSensor) != 0)
+		if(SensorValue(TouchSensor) != 0)
 		{//found and go back to line
 			find++;
 			turnaround ();
@@ -375,7 +430,7 @@ void findingleft (void)
 		{
 			left ();
 			forwardfull ();
-			if(sensorValue(touchSensor) != 0)
+			if(SensorValue(TouchSensor) != 0)
 			{
 				find++;
 				turnaround ();
@@ -391,7 +446,7 @@ void findingleft (void)
 			else
 			{
 				forwardfull ();
-				if(sensorValue(touchSensor) != 0)
+				if(SensorValue(TouchSensor) != 0)
 				{
 					find++;
 				}
@@ -418,7 +473,7 @@ void findingleft (void)
         forwardfull();
         left();
         forwardfull();
-        if(sensorValue(touchSensor) != 0)
+        if(SensorValue(TouchSensor) != 0)
         {
             find++;
             turnaround();
@@ -434,7 +489,7 @@ void findingleft (void)
         {
             right();
             forwardfull();
-            if(sensorValue(touchSensor) != 0)
+            if(SensorValue(TouchSensor) != 0)
             {
                 find++;
                 turnaround();
@@ -451,7 +506,7 @@ void findingleft (void)
             else
             {
                 forwardfull();
-                if(sensorValue(touchSensor) != 0)
+                if(SensorValue(TouchSensor) != 0)
                 {
                     find++;
                 }
@@ -480,7 +535,7 @@ void findingleft (void)
         forwardfull();
         right();
         forwardfull();
-        if(sensorValue(touchSensor) != 0)
+        if(SensorValue(TouchSensor) != 0)
         {
             find++;
         }
@@ -498,7 +553,7 @@ void findingleft (void)
 	{
         left();
         forwardfull();
-        if(sensorValue(touchSensor) != 0)
+        if(SensorValue(TouchSensor) != 0)
         {
             find++;
             turnaround();
@@ -518,7 +573,7 @@ void findingleft (void)
             right();
             forwardfull();
             forwardfull();
-            if(sensorValue(touchSensor) != 0)
+            if(SensorValue(TouchSensor) != 0)
             {
                 find++;
             }
@@ -539,29 +594,146 @@ void findingleft (void)
 
 void findingright (void)
 {
+
+	int counter = 0;
+	int touch = 0;
+
+	if (y == 0|| y == 2 || y == 3 || y == 4 || y == 5 || y == 7 || y == 8)
+	{
+		right();
+		forwardsmall();
+		touch = SensorValue(TouchSensor);
+		while(touch == 0)
+		{
+			forwardfull();
+			counter++;
+			touch = SensorValue(TouchSensor);
+			if(touch != 0)
+			{
+				find++;
+			}
+			if(SensorValue(LightSensor) < thresholdValue)
+			{
+				touch = 1;
+			}
+
+			if(counter == 3)
+			{
+				touch = 1;
+			}
+
+
+			if(touch != 0)
+			{
+				backwardsmall();
+				turnaround();
+				while(counter != 0)
+				{
+					counter--;
+					forwardfull();
+				}
+				right();
+			}
+
+		 }
+	}
+
 	if (x == 0 && y == 1)
 	{
-
+		right();
+		forwardfull();
+		if(SensorValue(TouchSensor) != 0)
+		{
+			find++;
+			turnaround();
+			forwardfull();
+			right();
+		}
+		else
+		{
+			left();
+			forwardfull();
+			right();
+			forwardfull();
+			forwardfull();
+			right();
+			forwardfull();
+			if(SensorValue(TouchSensor) != 0)
+			{
+				find++;
+			}
+			turnaround();
+			forwardfull();
+			left();
+			forwardfull();
+			forwardfull();
+			left();
+			forwardfull();
+			right();
+			forwardfull();
+			right();
+		}
 	}
 
 	if(x == 0 && y == 6)
 	{
-
+		turnaround();
+		forwardfull();
+		left();
+		forwardfull();
+		forwardfull();
+		left();
+		forwardfull();
+		if(SensorValue(TouchSensor) != 0)
+		{
+			find++;
+			turnaround();
+			forwardfull();
+			right();
+			forwardfull();
+			forwardfull();
+			right();
+			forwardfull();
+		}
+		else
+		{
+			right();
+			forwardfull();
+			if(SensorValue(TouchSensor) != 0)
+			{
+				find++;
+			}
+			turnaround();
+			forwardfull();
+			left();
+			forwardfull();
+			right();
+			forwardfull();
+			forwardfull();
+			right();
+			forwardfull();
+		}
 	}
 }
 
 void scan (void)
 {
+
+
 	//finding object on left
 	if(SensorValue(SonarSensorLeft) < 255)
 	{
+		backwardsmall();
 		findingleft ();
+		forwardsmall();
 	}
 
 	//finding object on right
 	if(SensorValue(SonarSensorRight) < 255)
 	{
+		backwardsmall();
 		findingright ();
+		forwardsmall();
 	}
 }
 
