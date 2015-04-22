@@ -2,14 +2,10 @@
 task main()
 {
 
+	erasedisplay();
+	nxtDisplayBigStringAt(0, 31, "%d,%d,%d,%d" ,y,x,direction,forwardCounter);
+	
+	
 
-			nxtDisplayBigStringAt(0, 31, "%d" ,y);
-			nxtDisplayBigStringAt(1, 31, "%d" ,x);
-			nxtDisplayBigStringAt(2, 31, "%d" ,direction);
-			nxtDisplayBigStringAt(3, 31, "%d" ,forwardCounter);
-		
-			 ClearScreen();
-			 Wait(SEC_5);
-			
 
 }
