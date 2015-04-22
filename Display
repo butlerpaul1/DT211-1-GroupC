@@ -1,0 +1,15 @@
+
+task main()
+{
+
+
+			nxtDisplayBigStringAt(0, 31, "%d" ,y);
+			nxtDisplayBigStringAt(1, 31, "%d" ,x);
+			nxtDisplayBigStringAt(2, 31, "%d" ,direction);
+			nxtDisplayBigStringAt(3, 31, "%d" ,forwardCounter);
+		
+			 ClearScreen();
+			 Wait(SEC_5);
+			
+
+}
