@@ -164,8 +164,8 @@ void left (void)
 	nMotorEncoder[motorC] = 0;
 	nMotorEncoderTarget[motorA] = 180;
 	nMotorEncoderTarget[motorC] = -180;
-	motor[motorA] = 20;
-	motor[motorC] = -20;
+	motor[motorA] = 30;
+	motor[motorC] = -30;
 
 
 	while (nMotorRunState[motorA] != runStateIdle)
@@ -195,8 +195,8 @@ void right (void)
 	nMotorEncoder[motorC] = 0;
 	nMotorEncoderTarget[motorA] = 180;
 	nMotorEncoderTarget[motorC] = -180;
-	motor[motorA] = -20;
-	motor[motorC] = 20;
+	motor[motorA] = -30;
+	motor[motorC] = 30;
 
 
 	while (nMotorRunState[motorA] != runStateIdle)
@@ -238,8 +238,8 @@ void forwardfull (void)
 	nMotorEncoderTarget[motorA] = 290;
 	nMotorEncoderTarget[motorC] = 290;
 
-	motor[motorA] = 20;
-	motor[motorC] = 20;
+	motor[motorA] = 30;
+	motor[motorC] = 30;
 
 	while (nMotorRunState[motorA] != runStateIdle)
 	{
@@ -271,8 +271,8 @@ void forwardsmall (void)
 	nMotorEncoder[motorC] = 0;
 	nMotorEncoderTarget[motorA] = 75;
 	nMotorEncoderTarget[motorC] = 75;
-	motor[motorA] = 20;
-	motor[motorC] = 20;
+	motor[motorA] = 30;
+	motor[motorC] = 30;
 
 	while (nMotorRunState[motorA] != runStateIdle)
 	{
@@ -293,8 +293,8 @@ void backwardsmall (void)
 	nMotorEncoder[motorC] = 0;
 	nMotorEncoderTarget[motorA] = -75;
 	nMotorEncoderTarget[motorC] = -75;
-	motor[motorA] = -20;
-	motor[motorC] = -20;
+	motor[motorA] = -30;
+	motor[motorC] = -30;
 
 	while (nMotorRunState[motorA] != runStateIdle)
 	{
