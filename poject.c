@@ -40,26 +40,9 @@ task main()
 {
 		nMotorPIDSpeedCtrl[motorA] = mtrSpeedReg;
 		nMotorPIDSpeedCtrl[motorC] = mtrSpeedReg;
-		int countValue = 0;												//look if there is black cell
-		int lineCounter = 0;											//counts lines
-		int lightValue = 0;												//light value
-		int darkValue = 0;												//dark value
-
 		int finish = 0;														//when 2 prgram stops
 		int turns = 0;
 
-	/**************************************************************************************/
-		/*while(SensorValue(TouchSensor) == 0)
-		{
-		}
-
-		lightValue = SensorValue(LightSensor);
-
-		while(SensorValue(TouchSensor) == 0)
-		{
-		}
-
-		darkValue = SensorValue(LightSensor);*/
 
 		thresholdValue = 50;
 
@@ -96,9 +79,6 @@ task main()
 
 			eraseDisplay();
 			nxtDisplayBigStringAt(0, 31, "%d,%d,%d,%d" ,y,x,direction,forwardCounter);
-
-
-
 
 			scan();
 
@@ -143,6 +123,7 @@ task main()
                 if(SensorValue(TouchSensor) != 0 )
                 {
                     find++;
+                    PlaySound(soundBeepBeep);
                 }
 
                 eraseDisplay();
@@ -181,8 +162,8 @@ void left (void)
 	motor[motorC] = 0;
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = 187;
-	nMotorEncoderTarget[motorC] = -187;
+	nMotorEncoderTarget[motorA] = 180;
+	nMotorEncoderTarget[motorC] = -180;
 	motor[motorA] = 20;
 	motor[motorC] = -20;
 
@@ -212,8 +193,8 @@ void right (void)
 	motor[motorC] = 0;
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = 187;
-	nMotorEncoderTarget[motorC] = -187;
+	nMotorEncoderTarget[motorA] = 180;
+	nMotorEncoderTarget[motorC] = -180;
 	motor[motorA] = -20;
 	motor[motorC] = 20;
 
@@ -254,8 +235,8 @@ void forwardfull (void)
 
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = 295;
-	nMotorEncoderTarget[motorC] = 295;
+	nMotorEncoderTarget[motorA] = 290;
+	nMotorEncoderTarget[motorC] = 290;
 
 	motor[motorA] = 20;
 	motor[motorC] = 20;
@@ -288,8 +269,8 @@ void forwardsmall (void)
 	motor[motorC] = 0;
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = 70;
-	nMotorEncoderTarget[motorC] = 70;
+	nMotorEncoderTarget[motorA] = 75;
+	nMotorEncoderTarget[motorC] = 75;
 	motor[motorA] = 20;
 	motor[motorC] = 20;
 
@@ -310,8 +291,8 @@ void backwardsmall (void)
 	motor[motorC] = 0;
 	nMotorEncoder[motorA] = 0;//reset
 	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorA] = -70;
-	nMotorEncoderTarget[motorC] = -70;
+	nMotorEncoderTarget[motorA] = -75;
+	nMotorEncoderTarget[motorC] = -75;
 	motor[motorA] = -20;
 	motor[motorC] = -20;
 
@@ -342,6 +323,7 @@ void findingleft (void)
 			if(touch != 0)
 			{
 				find++;
+				PlaySound(soundBeepBeep);
 			}
 			if(SensorValue(LightSensor) < thresholdValue)
 			{
@@ -371,11 +353,13 @@ void findingleft (void)
 
 	if (x == 0 && y == 0)
 	{
+		forwardsmall();
 		left();
 		forwardfull ();
 		if (SensorValue(TouchSensor) != 0)
 		{
 			find++;
+			PlaySound(soundBeepBeep);
 			turnaround ();
 			forwardfull ();
 			left ();
@@ -392,6 +376,7 @@ void findingleft (void)
 		if(SensorValue(TouchSensor) != 0)
 		{
 			find++;
+			PlaySound(soundBeepBeep);
 		}
 		turnaround ();
 		forwardfull ();
@@ -404,6 +389,7 @@ void findingleft (void)
 		forwardfull ();
 		left ();
 		}
+		backwardsmall();
 	}
 
 	if (x == 1 && y == 3)
@@ -418,6 +404,7 @@ void findingleft (void)
 		if(SensorValue(TouchSensor) != 0)
 		{//found and go back to line
 			find++;
+			PlaySound(soundBeepBeep);
 			turnaround ();
 			forwardfull ();
 			left ();
@@ -433,6 +420,7 @@ void findingleft (void)
 			if(SensorValue(TouchSensor) != 0)
 			{
 				find++;
+				PlaySound(soundBeepBeep);
 				turnaround ();
 				forwardfull ();
 				right ();
@@ -449,6 +437,7 @@ void findingleft (void)
 				if(SensorValue(TouchSensor) != 0)
 				{
 					find++;
+					PlaySound(soundBeepBeep);
 				}
 				turnaround ();
 				forwardfull ();
@@ -476,6 +465,7 @@ void findingleft (void)
         if(SensorValue(TouchSensor) != 0)
         {
             find++;
+            PlaySound(soundBeepBeep);
             turnaround();
             forwardfull();
             right();
@@ -492,6 +482,7 @@ void findingleft (void)
             if(SensorValue(TouchSensor) != 0)
             {
                 find++;
+                PlaySound(soundBeepBeep);
                 turnaround();
                 forwardfull();
                 left();
@@ -509,6 +500,7 @@ void findingleft (void)
                 if(SensorValue(TouchSensor) != 0)
                 {
                     find++;
+                    PlaySound(soundBeepBeep);
                 }
                 turnaround();
                 forwardfull();
@@ -538,6 +530,7 @@ void findingleft (void)
         if(SensorValue(TouchSensor) != 0)
         {
             find++;
+            PlaySound(soundBeepBeep);
         }
         turnaround();
         forwardfull();
@@ -556,6 +549,7 @@ void findingleft (void)
         if(SensorValue(TouchSensor) != 0)
         {
             find++;
+            PlaySound(soundBeepBeep);
             turnaround();
             left();
         }
@@ -576,6 +570,7 @@ void findingleft (void)
             if(SensorValue(TouchSensor) != 0)
             {
                 find++;
+                PlaySound(soundBeepBeep);
             }
             turnaround();
             forwardfull();
@@ -611,6 +606,7 @@ void findingright (void)
 			if(touch != 0)
 			{
 				find++;
+				PlaySound(soundBeepBeep);
 			}
 			if(SensorValue(LightSensor) < thresholdValue)
 			{
@@ -645,6 +641,7 @@ void findingright (void)
 		if(SensorValue(TouchSensor) != 0)
 		{
 			find++;
+			PlaySound(soundBeepBeep);
 			turnaround();
 			forwardfull();
 			right();
@@ -661,6 +658,7 @@ void findingright (void)
 			if(SensorValue(TouchSensor) != 0)
 			{
 				find++;
+				PlaySound(soundBeepBeep);
 			}
 			turnaround();
 			forwardfull();
@@ -687,6 +685,7 @@ void findingright (void)
 		if(SensorValue(TouchSensor) != 0)
 		{
 			find++;
+			PlaySound(soundBeepBeep);
 			turnaround();
 			forwardfull();
 			right();
@@ -702,6 +701,7 @@ void findingright (void)
 			if(SensorValue(TouchSensor) != 0)
 			{
 				find++;
+				PlaySound(soundBeepBeep);
 			}
 			turnaround();
 			forwardfull();
@@ -739,6 +739,56 @@ void scan (void)
 
 void backhome (void)
 {
-	turnaround();
-	turnaround();
+	if(x==0)
+	{
+		while(direction!=3)
+			{
+				left();
+			}
+			while(y!=0)
+			{
+				forwardfull();
+			}
+	}
+	else
+	{
+		if(x>0)
+		{
+			while(direction!=4)
+			{
+				left();
+			}
+			while(x!=0)
+			{
+				forwardfull();
+			}
+			while(direction!=3)
+			{
+				left();
+			}
+			while(y!=0)
+			{
+				forwardfull();
+			}
+		}
+		else
+		{
+			while(direction!=2)
+			{
+				right();
+			}
+			while(x!=0)
+			{
+				forwardfull();
+			}
+			while(direction!=3)
+			{
+				right();
+			}
+			while(y!=0)
+			{
+				forwardfull();
+			}
+		}
+	}
 }
